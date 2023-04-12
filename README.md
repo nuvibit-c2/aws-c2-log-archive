@@ -29,6 +29,6 @@ This repository is maintained by [Nuvibit][nuvibit-url] with help from [these am
 [nuvibit-url]: https://nuvibit.com
 [terraform-version-shield]: https://img.shields.io/badge/terraform-%3E%3D1.2-blue.svg?style=flat&color=blueviolet
 [terraform-version-url]: https://developer.hashicorp.com/terraform/language/v1.2.x/upgrade-guides
-[contributors-url]: https://github.com/nuvibit-c2/aws-c2-log-archive/graphs/contributors
+[contributors-url]: https://github.com/nuvibit-terraform-collection/aws-c2-log-archive/graphs/contributors
 [terraform-workspace-url]: https://app.terraform.io/app/nuvibit-c2/workspaces/aws-c2-log-archive
 [aws-url]: https://aws.amazon.com

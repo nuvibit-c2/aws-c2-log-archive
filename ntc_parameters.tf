@@ -14,7 +14,7 @@ locals {
 # ¦ CORE PARAMETERS - READER
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_parameters_reader" {
-  source = "github.com/nuvibit/terraform-aws-ntc-parameters//modules/reader?ref=beta"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/reader?ref=beta"
 
   bucket_name = "ntc-parameters-c2"
 }
@@ -23,7 +23,7 @@ module "ntc_parameters_reader" {
 # # ¦ CORE PARAMETERS - WRITER
 # # ---------------------------------------------------------------------------------------------------------------------
 # module "ntc_parameters_writer" {
-#   source = "github.com/nuvibit/terraform-aws-ntc-parameters//modules/writer?ref=beta"
+#   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/writer?ref=beta"
 
 #   bucket_name     = "ntc-parameters-c2"
 #   parameter_node  = "log-archive"
