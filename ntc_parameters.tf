@@ -16,7 +16,7 @@ locals {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ CORE PARAMETERS - READER
+# ¦ NTC PARAMETERS - READER
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_parameters_reader" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/reader?ref=beta"
@@ -25,7 +25,7 @@ module "ntc_parameters_reader" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# ¦ CORE PARAMETERS - WRITER
+# ¦ NTC PARAMETERS - WRITER
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_parameters_writer" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/writer?ref=beta"
