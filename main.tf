@@ -3,25 +3,17 @@
 # ---------------------------------------------------------------------------------------------------------------------
 provider "aws" {
   region = "eu-central-1"
-  # default_tags {
-  #   tags = local.default_tags
-  # }
 }
 
 provider "aws" {
   alias  = "euc1"
   region = "eu-central-1"
-  # default_tags {
-  #   tags = local.default_tags
-  # }
 }
 
+# provider for us-east-1 region is sometimes required for specific features or services
 provider "aws" {
   alias  = "use1"
   region = "us-east-1"
-  # default_tags {
-  #   tags = local.default_tags
-  # }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -33,7 +25,7 @@ terraform {
   required_providers {
     aws = {
       source                = "hashicorp/aws"
-      version               = "~> 4.10, != 4.34"
+      version               = "~> 4.0"
       configuration_aliases = []
     }
   }
