@@ -89,6 +89,21 @@ resource "aws_s3_bucket" "org_cloudtrail_bucket" {
   }
 }
 
+resource "aws_s3_bucket_server_side_encryption_configuration" "org_cloudtrail_bucket_sse" {
+bucket = aws_s3_bucket.org_cloudtrail_bucket.id
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_alias.org_cloudtrail_bucket_kms.arn
+      sse_algorithm = "aws:kms"
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "org_cloudtrail_bucket_policy {
+  bucket = aws_s3_bucket.org_cloudtrail_bucket.id
+  policy = dat.aws_iam_policy_document.org_cloudtrail_bucket_policy.json
+}
+
 data "aws_iam_policy_document" "org_cloudtrail_bucket_policy" {
   statement {
     sid = "allow_org_cloudtrail"
@@ -124,3 +139,4 @@ data "aws_iam_policy_document" "org_cloudtrail_bucket_policy" {
     sid = "allow"
   }
 }
+
