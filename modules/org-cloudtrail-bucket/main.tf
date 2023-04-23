@@ -68,7 +68,7 @@ data "aws_iam_policy_document" "org_cloudtrail_bucket_kms" {
 }
 
 resource "aws_kms_alias" "org_cloudtrail_bucket_kms" {
-  name          = format("alias/%s", var.org_cloudtrail_bucket_kms_alias
+  name          = format("alias/%s", var.org_cloudtrail_bucket_kms_alias)
   target_key_id = aws_kms_key.org_cloudtrail_bucket_kms.key_id
 }
 
@@ -84,26 +84,26 @@ resource "aws_s3_bucket" "org_cloudtrail_bucket" {
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "org_cloudtrail_bucket_sse" {
-bucket = aws_s3_bucket.org_cloudtrail_bucket.id
+  bucket = aws_s3_bucket.org_cloudtrail_bucket.id
   rule {
     apply_server_side_encryption_by_default {
       kms_master_key_id = aws_kms_alias.org_cloudtrail_bucket_kms.arn
-      sse_algorithm = "aws:kms"
+      sse_algorithm     = "aws:kms"
     }
   }
 }
 
-resource "aws_s3_bucket_policy" "org_cloudtrail_bucket_policy {
+resource "aws_s3_bucket_policy" "org_cloudtrail_bucket_policy" {
   bucket = aws_s3_bucket.org_cloudtrail_bucket.id
   policy = dat.aws_iam_policy_document.org_cloudtrail_bucket_policy.json
 }
 
 data "aws_iam_policy_document" "org_cloudtrail_bucket_policy" {
   statement {
-    sid = "allow_org_cloudtrail"
+    sid    = "allow_org_cloudtrail"
     effect = "Allow"
     principals {
-      type = "Service"
+      type        = "Service"
       identifiers = ["cloudtrail.amazonaws.com"]
     }
     actions = ["s3:PutObject"]
@@ -111,21 +111,21 @@ data "aws_iam_policy_document" "org_cloudtrail_bucket_policy" {
     resource = format("aws:aws:s3:::%s/%s/*/AWSLogs/*", aws_s3_bucket.org_cloudtrail_bucket.name, var.org_id)
 
     condition {
-      test = "StringNotEquals"
+      test     = "StringNotEquals"
       variable = "s3:x-amz-acl"
-      values = ["bucket-owner-full-control"]
+      values   = ["bucket-owner-full-control"]
     }
 
     condition {
-      test = "StringNotEquals"
+      test     = "StringNotEquals"
       variable = "aws:SourceArn"
-      values = [format("arn:aws:cloudtrail:%s:%s:trail/*", var.org_cloudtrail_region, var.cloudtrail_admin_account_id)]
+      values   = [format("arn:aws:cloudtrail:%s:%s:trail/*", var.org_cloudtrail_region, var.cloudtrail_admin_account_id)]
     }
 
     condition {
-      test = "StringNotEquals"
+      test     = "StringNotEquals"
       variable = "s3:x-amz-server-side-encryption-aws-kms-key-id"
-      values = [aws_kms_key.org_cloudtrail_bucket_kms.id]
+      values   = [aws_kms_key.org_cloudtrail_bucket_kms.id]
     }
   }
 
