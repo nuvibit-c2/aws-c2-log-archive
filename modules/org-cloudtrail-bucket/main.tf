@@ -11,7 +11,7 @@ resource "aws_kms_key" "org_cloudtrail_bucket_kms" {
   description             = "encryption key for SSE of cloudtrail bucket"
   deletion_window_in_days = 7
   enable_key_rotation     = true
-  policy                  = data.aws_iam_policy_document.core_logging_cloudtrail_mgmt_kms.json
+  policy                  = data.aws_iam_policy_document.org_cloudtrail_bucket_kms.json
   tags = merge(
     var.resource_tags,
     {
