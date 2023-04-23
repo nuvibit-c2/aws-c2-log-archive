@@ -1,3 +1,13 @@
+variable "org_cloudtrail_bucket_name" {
+  type = string
+  description = "Name of the bucket used to store CloudTrail logs"
+
+  validation {
+    condition     = can(regex("(?!(^xn--|.+-s3alias$))^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$", var.org_cloudtrail_bucket_name))
+    error_message = "\"org_mgmt_account_id\" needs to be a valid Account ID: 12 digit number."
+  }
+}
+
 variable "cloudtrail_admin_account_id" {
   type = string
   description = "Account ID of Organization Management Account or the delegated CloudTrail Admin Account where the Organization CloudTrail will be deployed"
