@@ -28,4 +28,14 @@ variable "org_cloudtrail_name" {
 variable "org_cloudtrail_region" {
   type = string
   description = "Region where the Organization CloudTrail will be deployed"
+
+  //TODO Condition
 }
+
+variable "org_cloudtrail_bucket_kms_alias" {
+  type = string
+  description = "Alias for ClouTrail bucket KMS key alias"
+
+  //TODO Condition
+}
+

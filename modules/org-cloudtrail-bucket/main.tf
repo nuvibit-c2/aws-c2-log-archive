@@ -68,7 +68,7 @@ data "aws_iam_policy_document" "org_cloudtrail_bucket_kms" {
 }
 
 resource "aws_kms_alias" "org_cloudtrail_bucket_kms" {
-  name          = format("alias/%s", var.org_cloudtrail_kms_alias
+  name          = format("alias/%s", var.org_cloudtrail_bucket_kms_alias
   target_key_id = aws_kms_key.org_cloudtrail_bucket_kms.key_id
 }
 
