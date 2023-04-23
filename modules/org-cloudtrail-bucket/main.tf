@@ -12,12 +12,6 @@ resource "aws_kms_key" "org_cloudtrail_bucket_kms" {
   deletion_window_in_days = 7
   enable_key_rotation     = true
   policy                  = data.aws_iam_policy_document.org_cloudtrail_bucket_kms.json
-  tags = merge(
-    var.resource_tags,
-    {
-      "CF:KeyDeletionProtection" = "true"
-    }
-  )
 }
 
 data "aws_iam_policy_document" "org_cloudtrail_bucket_kms" {
