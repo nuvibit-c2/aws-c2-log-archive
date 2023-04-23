@@ -8,7 +8,7 @@ data "aws_caller_identity" "current" {}
 # ¦ KMS KEY
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_kms_key" "org_cloudtrail_bucket_kms" {
-  description             = "encryption key for object uploads to ${module.core_logging_cloudtrail_mgmt_bucket.name}"
+  description             = "encryption key for SSE of cloudtrail bucket"
   deletion_window_in_days = 7
   enable_key_rotation     = true
   policy                  = data.aws_iam_policy_document.core_logging_cloudtrail_mgmt_kms.json
