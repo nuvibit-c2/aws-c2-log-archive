@@ -40,7 +40,7 @@ variable "org_cloudtrail_bucket_kms_alias" {
   description = "Alias for ClouTrail bucket KMS key alias"
 
   validation  {
-    condition = can (regex("^[a-zA-Z0-9\\/_-]{1,250}$"))
+    condition = can (regex("^[a-zA-Z0-9\\/_-]{1,250}$"), var.org_cloudtrail_bucket_kms_alias)
     error_message = "\"org_cloudtrail_bucket_kms_alias\" must only contain ASCII letters (a-z, A-Z), numbers (0-9), slashes (/), underscores (_), or dashes (-)"
   }
 }
