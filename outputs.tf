@@ -9,6 +9,6 @@ output "account_id" {
 }
 
 output "ntc_parameters" {
-  description = "Map of all ntc core parameters"
+  description = "Map of all ntc parameters"
   value       = local.ntc_parameters
 }

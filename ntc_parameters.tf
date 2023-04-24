@@ -1,9 +1,12 @@
 locals {
+  ntc_parameters_bucket_name = "aws-c2-ntc-parameters"
+  ntc_parameters_writer_node = "log-archive"
+
   # map of parameters merged from all parameter nodes
-  ntc_parameters = module.ntc_parameters_reader.parameter_map
+  ntc_parameters = module.ntc_parameters_reader.all_parameters
 
   # parameters that are managed by core log archive account
-  ntc_parameters_log_archive = {
+  ntc_parameters_to_write = {
     bucket_arns : {
       cloudtrail : ""
       config : ""
@@ -21,7 +24,7 @@ locals {
 module "ntc_parameters_reader" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/reader?ref=beta"
 
-  bucket_name = "aws-c2-ntc-parameters"
+  bucket_name = local.ntc_parameters_bucket_name
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -30,7 +33,7 @@ module "ntc_parameters_reader" {
 module "ntc_parameters_writer" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/writer?ref=beta"
 
-  bucket_name     = "aws-c2-ntc-parameters"
-  parameter_node  = "log-archive"
-  node_parameters = local.ntc_parameters_log_archive
+  bucket_name     = local.ntc_parameters_bucket_name
+  parameter_node  = local.ntc_parameters_writer_node
+  node_parameters = local.ntc_parameters_to_write
 }
