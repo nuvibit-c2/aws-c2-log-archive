@@ -16,6 +16,9 @@ locals {
       dns_logs : ""
     }
   }
+
+  # by default existing node parameters will be merged with new parameters to avoid deleting parameters
+  replace_parameters = true
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
