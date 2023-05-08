@@ -7,13 +7,9 @@ locals {
 
   # parameters that are managed by core log archive account
   ntc_parameters_to_write = {
-    bucket_arns : {
-      cloudtrail : ""
-      config : ""
-      guardduty : ""
-      security_hub : ""
-      flow_logs : ""
-      dns_logs : ""
+    log_archive : {
+      bucket_ids : module.log_archive.log_archive_bucket_ids
+      kms_key_arns : module.log_archive.log_archive_kms_key_arns
     }
   }
 
