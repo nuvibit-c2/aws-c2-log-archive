@@ -21,7 +21,7 @@ locals {
     }
   ]
 
-  # log archive buckets store logs from cloudtrail, aws config, vpc flow logs and more
+  # log archive buckets can store from cloudtrail logs, vpc flow logs, dns query logs, aws config logs and guardduty logs
   log_archive_buckets = [
     {
       bucket_name                   = "aws-c2-cloudtrail-archive"
