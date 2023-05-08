@@ -4,8 +4,25 @@
 locals {
   log_archive_buckets = [
     {
-      bucket_name = "aws-c2-cloudtrail-archive"
+      bucket_name  = "aws-c2-cloudtrail-archive"
       archive_type = "org_cloudtrail"
+      lifecycle_configuration_rules = [
+        {
+          id      = "transition_to_glacier"
+          enabled = true
+          transition = {
+            days          = 365
+            storage_class = "GLACIER"
+          }
+        },
+        {
+          id      = "expire_logs"
+          enabled = true
+          expiration = {
+            days = 730
+          }
+        }
+      ]
     }
   ]
 }
