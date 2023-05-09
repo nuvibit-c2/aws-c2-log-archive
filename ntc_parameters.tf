@@ -7,18 +7,14 @@ locals {
 
   # parameters that are managed by core log archive account
   ntc_parameters_to_write = {
-    bucket_arns : {
-      cloudtrail : ""
-      config : ""
-      guardduty : ""
-      security_hub : ""
-      flow_logs : ""
-      dns_logs : ""
+    log_archive : {
+      bucket_ids : module.log_archive.log_archive_bucket_ids
+      kms_key_arns : module.log_archive.log_archive_kms_key_arns
     }
   }
 
   # by default existing node parameters will be merged with new parameters to avoid deleting parameters
-  replace_parameters = true
+  ntc_parameters_replace = true
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -36,7 +32,8 @@ module "ntc_parameters_reader" {
 module "ntc_parameters_writer" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/writer?ref=beta"
 
-  bucket_name     = local.ntc_parameters_bucket_name
-  parameter_node  = local.ntc_parameters_writer_node
-  node_parameters = local.ntc_parameters_to_write
+  bucket_name        = local.ntc_parameters_bucket_name
+  parameter_node     = local.ntc_parameters_writer_node
+  node_parameters    = local.ntc_parameters_to_write
+  replace_parameters = local.ntc_parameters_replace
 }
