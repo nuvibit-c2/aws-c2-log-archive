@@ -7,10 +7,8 @@ locals {
 
   # parameters that are managed by core log archive account
   ntc_parameters_to_write = {
-    log_archive : {
-      bucket_ids : module.log_archive.log_archive_bucket_ids
-      kms_key_arns : module.log_archive.log_archive_kms_key_arns
-    }
+    log_bucket_ids : module.log_archive.log_archive_bucket_ids
+    log_bucket_kms_key_arns : module.log_archive.log_archive_kms_key_arns
   }
 
   # by default existing node parameters will be merged with new parameters to avoid deleting parameters
