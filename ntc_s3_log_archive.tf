@@ -25,7 +25,7 @@ locals {
   log_archive_buckets = [
     {
       bucket_name                   = "aws-c2-cloudtrail-archive"
-      archive_type                  = "cloudtrail"
+      archive_type                  = "org_cloudtrail"
       lifecycle_configuration_rules = local.default_lifecycle_configuration_rules
     },
     {
