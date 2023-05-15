@@ -30,7 +30,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_log_archive"></a> [log\_archive](#module\_log\_archive) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-s3 | beta |
+| <a name="module_log_archive"></a> [log\_archive](#module\_log\_archive) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive | beta |
 | <a name="module_ntc_parameters_reader"></a> [ntc\_parameters\_reader](#module\_ntc\_parameters\_reader) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/reader | beta |
 | <a name="module_ntc_parameters_writer"></a> [ntc\_parameters\_writer](#module\_ntc\_parameters\_writer) | github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/writer | beta |
 
