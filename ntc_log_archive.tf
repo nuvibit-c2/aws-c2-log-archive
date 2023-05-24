@@ -32,6 +32,18 @@ locals {
       bucket_name                   = "aws-c2-vpc-flow-logs-archive"
       archive_type                  = "vpc_flow_logs"
       lifecycle_configuration_rules = local.default_lifecycle_configuration_rules
+    },
+    {
+      bucket_name                   = "aws-c2-guardduty-archive"
+      archive_type                  = "guardduty"
+      lifecycle_configuration_rules = local.default_lifecycle_configuration_rules
+    },
+    {
+      bucket_name                   = "aws-c2-config-archive"
+      archive_type                  = "aws_config"
+      lifecycle_configuration_rules = local.default_lifecycle_configuration_rules
+      config_iam_path               = "/"
+      config_iam_role_name          = "baseline-aws-config-role"
     }
   ]
 }
