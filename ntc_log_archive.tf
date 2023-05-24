@@ -34,6 +34,11 @@ locals {
       lifecycle_configuration_rules = local.default_lifecycle_configuration_rules
     },
     {
+      bucket_name                   = "aws-c2-dns-query-logs-archive"
+      archive_type                  = "dns_query_logs"
+      lifecycle_configuration_rules = local.default_lifecycle_configuration_rules
+    },
+    {
       bucket_name                   = "aws-c2-guardduty-archive"
       archive_type                  = "guardduty"
       lifecycle_configuration_rules = local.default_lifecycle_configuration_rules
