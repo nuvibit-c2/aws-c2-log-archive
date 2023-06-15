@@ -47,8 +47,8 @@ locals {
       bucket_name                   = "aws-c2-config-archive"
       archive_type                  = "aws_config"
       lifecycle_configuration_rules = local.default_lifecycle_configuration_rules
-      config_iam_path               = "/"
-      config_iam_role_name          = "baseline-aws-config-role"
+      # config_iam_path               = "/"
+      # config_iam_role_name          = "ntc-config-role"
     }
   ]
 }
