@@ -21,34 +21,51 @@ locals {
     }
   ]
 
-  # log archive buckets can store from cloudtrail logs, vpc flow logs, dns query logs, aws config logs and guardduty logs
+  # log archive buckets to store s3 access logs, cloudtrail logs, vpc flow logs, dns query logs, aws config logs and guardduty logs
+  # s3 access logging bucket must be deployed first or terraform must run twice
+  s3_access_logging_bucket_name = "aws-c2-access-logging"
   log_archive_buckets = [
     {
-      bucket_name                   = "aws-c2-cloudtrail-archive"
-      archive_type                  = "org_cloudtrail"
+      bucket_name                   = local.s3_access_logging_bucket_name
+      archive_type                  = "s3_access_logging"
       lifecycle_configuration_rules = local.default_lifecycle_configuration_rules
     },
     {
-      bucket_name                   = "aws-c2-vpc-flow-logs-archive"
-      archive_type                  = "vpc_flow_logs"
-      lifecycle_configuration_rules = local.default_lifecycle_configuration_rules
+      bucket_name                       = "aws-c2-cloudtrail-archive"
+      archive_type                      = "org_cloudtrail"
+      lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
+      enable_access_logging             = true
+      access_logging_target_bucket_name = local.s3_access_logging_bucket_name
     },
     {
-      bucket_name                   = "aws-c2-dns-query-logs-archive"
-      archive_type                  = "dns_query_logs"
-      lifecycle_configuration_rules = local.default_lifecycle_configuration_rules
+      bucket_name                       = "aws-c2-vpc-flow-logs-archive"
+      archive_type                      = "vpc_flow_logs"
+      lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
+      enable_access_logging             = true
+      access_logging_target_bucket_name = local.s3_access_logging_bucket_name
     },
     {
-      bucket_name                   = "aws-c2-guardduty-archive"
-      archive_type                  = "guardduty"
-      lifecycle_configuration_rules = local.default_lifecycle_configuration_rules
+      bucket_name                       = "aws-c2-dns-query-logs-archive"
+      archive_type                      = "dns_query_logs"
+      lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
+      enable_access_logging             = true
+      access_logging_target_bucket_name = local.s3_access_logging_bucket_name
     },
     {
-      bucket_name                   = "aws-c2-config-archive"
-      archive_type                  = "aws_config"
-      lifecycle_configuration_rules = local.default_lifecycle_configuration_rules
-      # config_iam_path               = "/"
-      # config_iam_role_name          = "ntc-config-role"
+      bucket_name                       = "aws-c2-guardduty-archive"
+      archive_type                      = "guardduty"
+      lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
+      enable_access_logging             = true
+      access_logging_target_bucket_name = local.s3_access_logging_bucket_name
+    },
+    {
+      bucket_name                       = "aws-c2-config-archive"
+      archive_type                      = "aws_config"
+      lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
+      config_iam_path                   = "/"
+      config_iam_role_name              = "ntc-config-role"
+      enable_access_logging             = true
+      access_logging_target_bucket_name = local.s3_access_logging_bucket_name
     }
   ]
 }
