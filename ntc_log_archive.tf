@@ -74,7 +74,7 @@ locals {
 # ¦ NTC S3 LOG ARCHIVE
 # ---------------------------------------------------------------------------------------------------------------------
 module "log_archive" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=beta"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.0.0"
 
   log_archive_buckets = local.log_archive_buckets
 
