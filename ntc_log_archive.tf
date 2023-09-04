@@ -36,6 +36,11 @@ locals {
       lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
       enable_access_logging             = true
       access_logging_target_bucket_name = local.s3_access_logging_bucket_name
+      # object_lock_enabled               = true
+      # object_lock_configuration = {
+      #   retention_mode = "COMPLIANCE"
+      #   retention_days = 365
+      # }
     },
     {
       bucket_name                       = "aws-c2-vpc-flow-logs-archive"
@@ -74,7 +79,7 @@ locals {
 # ¦ NTC S3 LOG ARCHIVE
 # ---------------------------------------------------------------------------------------------------------------------
 module "log_archive" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.0.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.0.1"
 
   log_archive_buckets = local.log_archive_buckets
 
