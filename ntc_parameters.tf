@@ -2,9 +2,6 @@ locals {
   ntc_parameters_bucket_name = "aws-c2-ntc-parameters"
   ntc_parameters_writer_node = "log-archive"
 
-  # map of parameters merged from all parameter nodes
-  ntc_parameters = module.ntc_parameters_reader.all_parameters
-
   # parameters that are managed by core log archive account
   ntc_parameters_to_write = {
     log_bucket_arns : module.log_archive.log_archive_bucket_arns
@@ -14,6 +11,9 @@ locals {
 
   # by default existing node parameters will be merged with new parameters to avoid deleting parameters
   ntc_parameters_replace = true
+
+  # map of parameters merged from all parameter nodes
+  ntc_parameters = module.ntc_parameters_reader.all_parameters
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
