@@ -21,9 +21,17 @@ locals {
     }
   ]
 
-  # log archive buckets to store s3 access logs, cloudtrail logs, vpc flow logs, dns query logs, aws config logs and guardduty logs
   # s3 access logging bucket must be deployed first or terraform must run twice
   s3_access_logging_bucket_name = "aws-c2-access-logging"
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ¦ NTC S3 LOG ARCHIVE
+# ---------------------------------------------------------------------------------------------------------------------
+module "log_archive" {
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.0.2"
+
+  # log archive buckets to store s3 access logs, cloudtrail logs, vpc flow logs, dns query logs, aws config logs and guardduty logs
   log_archive_buckets = [
     {
       bucket_name                   = local.s3_access_logging_bucket_name
@@ -73,15 +81,6 @@ locals {
       access_logging_target_bucket_name = local.s3_access_logging_bucket_name
     }
   ]
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
-# ¦ NTC S3 LOG ARCHIVE
-# ---------------------------------------------------------------------------------------------------------------------
-module "log_archive" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.0.2"
-
-  log_archive_buckets = local.log_archive_buckets
 
   providers = {
     aws = aws.euc1
