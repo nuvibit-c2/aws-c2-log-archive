@@ -37,6 +37,7 @@ module "log_archive" {
       bucket_name                   = local.s3_access_logging_bucket_name
       archive_type                  = "s3_access_logging"
       lifecycle_configuration_rules = local.default_lifecycle_configuration_rules
+      object_lock_enabled           = false
     },
     {
       bucket_name                       = "aws-c2-cloudtrail-archive"
@@ -44,6 +45,7 @@ module "log_archive" {
       lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
       enable_access_logging             = true
       access_logging_target_bucket_name = local.s3_access_logging_bucket_name
+      access_logging_target_prefix      = "org_cloudtrail/"
       # object_lock_enabled               = true
       # object_lock_configuration = {
       #   retention_mode = "COMPLIANCE"
@@ -56,6 +58,7 @@ module "log_archive" {
       lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
       enable_access_logging             = true
       access_logging_target_bucket_name = local.s3_access_logging_bucket_name
+      access_logging_target_prefix      = "vpc_flow_logs/"
     },
     {
       bucket_name                       = "aws-c2-dns-query-logs-archive"
@@ -63,6 +66,7 @@ module "log_archive" {
       lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
       enable_access_logging             = true
       access_logging_target_bucket_name = local.s3_access_logging_bucket_name
+      access_logging_target_prefix      = "dns_query_logs/"
     },
     {
       bucket_name                       = "aws-c2-guardduty-archive"
@@ -70,6 +74,7 @@ module "log_archive" {
       lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
       enable_access_logging             = true
       access_logging_target_bucket_name = local.s3_access_logging_bucket_name
+      access_logging_target_prefix      = "guardduty/"
     },
     {
       bucket_name                       = "aws-c2-config-archive"
@@ -79,6 +84,7 @@ module "log_archive" {
       config_iam_role_name              = "ntc-config-role"
       enable_access_logging             = true
       access_logging_target_bucket_name = local.s3_access_logging_bucket_name
+      access_logging_target_prefix      = "aws_config/"
     }
   ]
 
