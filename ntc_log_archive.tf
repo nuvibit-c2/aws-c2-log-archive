@@ -29,8 +29,7 @@ locals {
 # ¦ NTC S3 LOG ARCHIVE
 # ---------------------------------------------------------------------------------------------------------------------
 module "log_archive" {
-  # source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.1.1"
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=feat-tgw-flow-logs"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.2.0"
 
   # log archive buckets to store s3 access logs, cloudtrail logs, vpc flow logs, dns query logs, aws config logs and guardduty logs
   log_archive_buckets = [
