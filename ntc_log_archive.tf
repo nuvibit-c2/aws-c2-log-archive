@@ -29,7 +29,7 @@ locals {
 # ¦ NTC S3 LOG ARCHIVE
 # ---------------------------------------------------------------------------------------------------------------------
 module "log_archive" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.1.1"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.2.0"
 
   # log archive buckets to store s3 access logs, cloudtrail logs, vpc flow logs, dns query logs, aws config logs and guardduty logs
   log_archive_buckets = [
@@ -59,6 +59,14 @@ module "log_archive" {
       enable_access_logging             = true
       access_logging_target_bucket_name = local.s3_access_logging_bucket_name
       access_logging_target_prefix      = "vpc_flow_logs/"
+    },
+    {
+      bucket_name                       = "aws-c2-transit-gateway-logs-archive"
+      archive_type                      = "transit_gateway_flow_logs"
+      lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
+      enable_access_logging             = true
+      access_logging_target_bucket_name = local.s3_access_logging_bucket_name
+      access_logging_target_prefix      = "transit_gateway_flow_logs/"
     },
     {
       bucket_name                       = "aws-c2-dns-query-logs-archive"
