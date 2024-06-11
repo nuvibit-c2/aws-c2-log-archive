@@ -28,7 +28,7 @@ locals {
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ NTC S3 LOG ARCHIVE
 # ---------------------------------------------------------------------------------------------------------------------
-module "log_archive" {
+module "ntc_log_archive" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.2.0"
 
   # log archive buckets to store s3 access logs, cloudtrail logs, vpc flow logs, dns query logs, aws config logs and guardduty logs
@@ -100,3 +100,28 @@ module "log_archive" {
     aws = aws.euc1
   }
 }
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ¦ NTC S3 LOG ARCHIVE - EXCEPTION
+# ---------------------------------------------------------------------------------------------------------------------
+# WARNING: guardduty log archive cannot be provisioned in opt-in region (e.g. zurich) - you can split log archive across 2 regions
+
+# module "ntc_log_archive_exception" {
+#   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.2.0"
+
+#   # guardduty cannot export findings from a default region to an opt-in region (e.g. from frankfurt to zurich)
+#   # hence, all guardduty findings are exported to eu-central-1
+#   log_archive_buckets = [
+#     {
+#       bucket_name                   = "nivel-guardduty-archive"
+#       archive_type                  = "guardduty"
+#       lifecycle_configuration_rules = local.default_lifecycle_configuration_rules
+#       enable_access_logging         = false # cross-region access logging is not possible
+#       object_lock_enabled           = false
+#     }
+#   ]
+
+#   providers = {
+#     aws = aws.euc1
+#   }
+# }
