@@ -5,7 +5,7 @@ output "forwarder_lambda_arn" {
 
 output "forwarder_url" {
   description = "The HTTP URL endpoint for the audit forwarder"
-  value       = var.forwarding_endpoint == "api_gateway" ? aws_apigatewayv2_stage.forwarder[0].invoke_url : aws_lambda_function_url.forwarder[0].function_url
+  value       = var.forwarding_endpoint == "api_gateway" ? aws_api_gateway_stage.forwarder[0].invoke_url : aws_lambda_function_url.forwarder[0].function_url
 }
 
 output "forwarder_lambda_iam_role_name" {

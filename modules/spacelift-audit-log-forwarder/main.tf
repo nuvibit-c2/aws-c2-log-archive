@@ -45,19 +45,39 @@ resource "random_string" "suffix" {
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ EVENT FORWARDER - API GATEWAY
 # ---------------------------------------------------------------------------------------------------------------------
-resource "aws_apigatewayv2_api" "forwarder" {
+resource "aws_api_gateway_rest_api" "forwarder" {
   count = var.forwarding_endpoint == "api_gateway" ? 1 : 0
 
-  name          = "${var.forwarder_name_prefix}-api"
-  protocol_type = "HTTP"
+  name        = "${var.forwarder_name_prefix}-api"
+  description = "API for forwarding requests to Lambda"
 }
 
-resource "aws_apigatewayv2_route" "forwarder" {
+resource "aws_api_gateway_resource" "forwarder" {
   count = var.forwarding_endpoint == "api_gateway" ? 1 : 0
 
-  api_id    = aws_apigatewayv2_api.forwarder[0].id
-  route_key = "$default"
-  target    = "integrations/${aws_apigatewayv2_integration.forwarder[0].id}"
+  rest_api_id = aws_api_gateway_rest_api.forwarder[0].id
+  parent_id   = aws_api_gateway_rest_api.forwarder[0].root_resource_id
+  path_part   = "forward"
+}
+
+resource "aws_api_gateway_method" "forwarder" {
+  count = var.forwarding_endpoint == "api_gateway" ? 1 : 0
+
+  rest_api_id   = aws_api_gateway_rest_api.forwarder[0].id
+  resource_id   = aws_api_gateway_resource.forwarder[0].id
+  http_method   = "POST"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "forwarder" {
+  count = var.forwarding_endpoint == "api_gateway" ? 1 : 0
+
+  rest_api_id             = aws_api_gateway_rest_api.forwarder[0].id
+  resource_id             = aws_api_gateway_resource.forwarder[0].id
+  http_method             = aws_api_gateway_method.forwarder[0].http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.forwarder.invoke_arn
 }
 
 resource "aws_lambda_permission" "forwarder" {
@@ -67,28 +87,27 @@ resource "aws_lambda_permission" "forwarder" {
   function_name = aws_lambda_function.forwarder.arn
   principal     = "apigateway.amazonaws.com"
 
-  source_arn = "${aws_apigatewayv2_api.forwarder[0].execution_arn}/*/*"
+  source_arn = "${aws_api_gateway_rest_api.forwarder[0].execution_arn}/*/*"
 }
 
-resource "aws_apigatewayv2_integration" "forwarder" {
+resource "aws_api_gateway_deployment" "forwarder" {
   count = var.forwarding_endpoint == "api_gateway" ? 1 : 0
 
-  api_id           = aws_apigatewayv2_api.forwarder[0].id
-  integration_type = "AWS_PROXY"
+  triggers = {
+    redeployment = sha1(jsonencode(aws_api_gateway_rest_api.forwarder[0].body))
+  }
 
-  connection_type      = "INTERNET"
-  description          = "Lambda example"
-  integration_method   = "POST"
-  integration_uri      = aws_lambda_function.forwarder.invoke_arn
-  passthrough_behavior = "WHEN_NO_MATCH"
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
-resource "aws_apigatewayv2_stage" "forwarder" {
+resource "aws_api_gateway_stage" "forwarder" {
   count = var.forwarding_endpoint == "api_gateway" ? 1 : 0
 
-  api_id      = aws_apigatewayv2_api.forwarder[0].id
-  auto_deploy = true
-  name        = "prod"
+  deployment_id = aws_api_gateway_deployment.forwarder[0].id
+  rest_api_id   = aws_api_gateway_rest_api.forwarder[0].id
+  stage_name    = "prod"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
