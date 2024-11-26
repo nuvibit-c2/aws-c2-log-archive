@@ -212,6 +212,7 @@ resource "aws_kinesis_firehose_delivery_stream" "stream" {
   server_side_encryption {
     enabled  = true
     key_type = "CUSTOMER_MANAGED_CMK"
+    key_arn  = aws_kms_key.encryption.arn
   }
 }
 
