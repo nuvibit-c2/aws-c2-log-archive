@@ -101,6 +101,10 @@ resource "aws_api_gateway_deployment" "forwarder" {
   lifecycle {
     create_before_destroy = true
   }
+
+  depends_on = [
+    aws_api_gateway_integration.forwarder
+  ]
 }
 
 resource "aws_api_gateway_stage" "forwarder" {
