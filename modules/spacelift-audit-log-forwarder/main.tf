@@ -21,15 +21,15 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ DATA
 # ---------------------------------------------------------------------------------------------------------------------
-data "aws_partition" "current" {}
 data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ LOCALS
 # ---------------------------------------------------------------------------------------------------------------------
 locals {
-  partition          = data.aws_partition.current.partition
   current_account_id = data.aws_caller_identity.current.account_id
+  current_region     = data.aws_region.current.name
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -255,7 +255,6 @@ resource "aws_iam_role" "stream" {
     Statement = [{
       Action = "sts:AssumeRole"
       Effect = "Allow"
-      Sid    = ""
       Principal = {
         Service = "firehose.amazonaws.com"
       }
@@ -287,6 +286,16 @@ resource "aws_iam_role_policy" "stream" {
       },
       {
         Effect = "Allow",
+        Action: [
+            "kinesis:DescribeStream",
+            "kinesis:GetShardIterator",
+            "kinesis:GetRecords",
+            "kinesis:ListShards"
+        ],
+        Resource = ["arn:aws:kinesis:${local.current_region}:${local.current_account_id}:stream/${var.forwarder_name_prefix}-stream"]
+      },
+      {
+        Effect = "Allow",
         Action = [
           "kms:Decrypt",
           "kms:GenerateDataKey"
@@ -296,7 +305,7 @@ resource "aws_iam_role_policy" "stream" {
         ],
         Condition = {
           StringEquals = {
-            "kms:ViaService" = "s3.region.amazonaws.com"
+            "kms:ViaService" = "s3.${local.current_region}.amazonaws.com"
           },
           StringLike = {
             "kms:EncryptionContext:aws:s3:arn" : "arn:aws:s3:::${aws_s3_bucket.storage.bucket}/*"
@@ -388,7 +397,7 @@ data "aws_iam_policy_document" "encryption" {
 
     principals {
       type        = "AWS"
-      identifiers = ["arn:${local.partition}:iam::${local.current_account_id}:root"]
+      identifiers = ["arn:aws:iam::${local.current_account_id}:root"]
     }
 
     actions   = ["kms:*"]
@@ -396,7 +405,7 @@ data "aws_iam_policy_document" "encryption" {
   }
 
   statement {
-    sid    = "AllowSpaceliftFowardingRole"
+    sid    = "AllowForwarderRole"
     effect = "Allow"
     principals {
       type        = "*"
@@ -412,13 +421,7 @@ data "aws_iam_policy_document" "encryption" {
     condition {
       test     = "StringLike"
       variable = "aws:PrincipalArn"
-      values   = ["arn:${local.partition}:iam::*:role/${var.forwarder_name_prefix}*"]
-    }
-
-    condition {
-      test     = "StringEquals"
-      variable = "aws:SourceAccount"
-      values   = [local.current_account_id]
+      values   = ["arn:aws:iam::${local.current_account_id}:role/${var.forwarder_name_prefix}*"]
     }
   }
 }
