@@ -132,7 +132,7 @@ data "archive_file" "lambda_function" {
 resource "aws_lambda_function" "forwarder" {
   filename         = data.archive_file.lambda_function.output_path
   function_name    = "${var.forwarder_name_prefix}-lambda"
-  handler          = "function.handler"
+  handler          = "main.handler"
   role             = aws_iam_role.forwarder.arn
   runtime          = "python${var.python_version}"
   source_code_hash = data.archive_file.lambda_function.output_base64sha256
