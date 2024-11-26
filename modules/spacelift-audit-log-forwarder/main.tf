@@ -93,6 +93,7 @@ resource "aws_lambda_permission" "forwarder" {
 resource "aws_api_gateway_deployment" "forwarder" {
   count = var.forwarding_endpoint == "api_gateway" ? 1 : 0
 
+  rest_api_id = aws_api_gateway_rest_api.forwarder[0].id
   triggers = {
     redeployment = sha1(jsonencode(aws_api_gateway_rest_api.forwarder[0].body))
   }
