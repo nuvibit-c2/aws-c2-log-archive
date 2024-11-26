@@ -25,7 +25,7 @@ module "spacelift_audit_log_forwarder_euc2" {
   source = "./modules/spacelift-audit-log-forwarder"
 
   forwarder_name_prefix = "spacelift-audit-log-forwarder-euc2"
-  forwarding_endpoint   = "lambda_function_url"
+  forwarding_endpoint   = "api_gateway"
   audit_trail_secret    = "1k2l3hjrkjh12lkjasd"
 
   providers = {
