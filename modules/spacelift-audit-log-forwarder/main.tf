@@ -50,6 +50,10 @@ resource "aws_api_gateway_rest_api" "forwarder" {
 
   name        = "${var.forwarder_name_prefix}-api"
   description = "API for forwarding requests to Lambda"
+
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
 }
 
 resource "aws_api_gateway_resource" "forwarder" {
@@ -57,7 +61,7 @@ resource "aws_api_gateway_resource" "forwarder" {
 
   rest_api_id = aws_api_gateway_rest_api.forwarder[0].id
   parent_id   = aws_api_gateway_rest_api.forwarder[0].root_resource_id
-  path_part   = "forward"
+  path_part   = "spacelift"
 }
 
 resource "aws_api_gateway_method" "forwarder" {
@@ -112,7 +116,7 @@ resource "aws_api_gateway_stage" "forwarder" {
 
   deployment_id = aws_api_gateway_deployment.forwarder[0].id
   rest_api_id   = aws_api_gateway_rest_api.forwarder[0].id
-  stage_name    = "prod"
+  stage_name    = "logs"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
