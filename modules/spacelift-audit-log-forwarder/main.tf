@@ -124,8 +124,8 @@ resource "aws_api_gateway_stage" "forwarder" {
 # ---------------------------------------------------------------------------------------------------------------------
 data "archive_file" "lambda_function" {
   output_file_mode = "0666"
-  output_path      = "${path.module}/files/event-forwarder-lambda.zip"
-  source_file      = "${path.module}/files/event-forwarder-lambda/main.py"
+  output_path      = "${path.module}/files/forwarder-lambda.zip"
+  source_file      = "${path.module}/files/forwarder-lambda/main.py"
   type             = "zip"
 }
 
