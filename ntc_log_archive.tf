@@ -4,21 +4,21 @@
 locals {
   # lifecycle configuration rules to optimize storage cost of logs throughout their lifecycle
   default_lifecycle_configuration_rules = [
-    {
-      id      = "transition_to_glacier"
-      enabled = true
-      transition = {
-        days          = 365
-        storage_class = "GLACIER"
-      }
-    },
-    {
-      id      = "expire_logs"
-      enabled = true
-      expiration = {
-        days = 730
-      }
-    }
+    # {
+    #   id      = "transition_to_glacier"
+    #   enabled = true
+    #   transition = {
+    #     days          = 365
+    #     storage_class = "GLACIER"
+    #   }
+    # },
+    # {
+    #   id      = "expire_logs"
+    #   enabled = true
+    #   expiration = {
+    #     days = 730
+    #   }
+    # }
   ]
 
   # s3 access logging bucket must be deployed first or terraform must run twice
