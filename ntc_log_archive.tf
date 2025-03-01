@@ -4,14 +4,14 @@
 locals {
   # lifecycle configuration rules to optimize storage cost of logs throughout their lifecycle
   default_lifecycle_configuration_rules = [
-    {
-      id      = "transition_to_glacier"
-      enabled = true
-      transition = {
-        days          = 365
-        storage_class = "GLACIER"
-      }
-    },
+    # {
+    #   id      = "transition_to_glacier"
+    #   enabled = true
+    #   transition = {
+    #     days          = 365
+    #     storage_class = "GLACIER"
+    #   }
+    # },
     {
       id      = "expire_logs"
       enabled = true
