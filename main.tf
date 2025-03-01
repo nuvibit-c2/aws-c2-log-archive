@@ -42,7 +42,7 @@ terraform {
   required_providers {
     aws = {
       source                = "hashicorp/aws"
-      version               = "~> 5.33, = 5.88"
+      version               = "~> 5.33"
       configuration_aliases = []
     }
   }
