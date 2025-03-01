@@ -30,21 +30,14 @@ resource "aws_s3_bucket_lifecycle_configuration" "debug" {
 
   rule {
     id     = "expire_logs"
-    status = "Enabled"
+
+    filter {}
 
     expiration {
       days = 730
     }
 
-    filter {}
-
-    noncurrent_version_transition {
-      storage_class = "GLACIER"
-    }
-
-    transition {
-      storage_class = "GLACIER"
-    }
+    status = "Enabled"
   }
 }
 
