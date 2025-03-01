@@ -25,20 +25,20 @@ locals {
   s3_access_logging_bucket_name = "aws-c2-access-logging"
 }
 
-# resource "aws_s3_bucket_lifecycle_configuration" "debug" {
-#   bucket = "aws-c2-vpc-flow-logs-archive"
+resource "aws_s3_bucket_lifecycle_configuration" "debug" {
+  bucket = "aws-c2-vpc-flow-logs-archive"
 
-#   rule {
-#     id     = "expire_logs"
-#     status = "Enabled"
+  rule {
+    id     = "expire_logs"
+    status = "Enabled"
 
-#     expiration {
-#       days = 730
-#     }
+    expiration {
+      days = 730
+    }
 
-#     filter {}
-#   }
-# }
+    filter {}
+  }
+}
 
 
 # ---------------------------------------------------------------------------------------------------------------------
