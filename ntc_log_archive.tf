@@ -4,83 +4,14 @@
 locals {
   # lifecycle configuration rules to optimize storage cost of logs throughout their lifecycle
   default_lifecycle_configuration_rules = [
-    # {
-    #   id      = "transition_to_glacier"
-    #   enabled = true
-    #   transition = {
-    #     days          = 365
-    #     storage_class = "GLACIER"
-    #   }
-    # },
-    # {
-    #   id      = "expire_logs"
-    #   enabled = true
-    #   expiration = {
-    #     days = 730
-    #   }
-    # }
-  ]
-
-  # s3 access logging bucket must be deployed first or terraform must run twice
-  s3_access_logging_bucket_name = "aws-c2-access-logging"
-}
-
-variable "lifecycle_configuration_rules" {
-  description = "A list of lifecycle rules."
-  type = list(object({
-    enabled                                = optional(bool, true)
-    id                                     = string
-    abort_incomplete_multipart_upload_days = optional(number, null)
-    filter = optional(
-      object({
-        object_size_greater_than = optional(number, null)
-        object_size_less_than    = optional(number, null)
-        prefix                   = optional(string, null)
-        tag = optional(
-          object({
-            key   = string
-            value = string
-          }), null
-        )
-      }), {}
-    )
-    filter_and = optional(
-      object({
-        object_size_greater_than = optional(number, null)
-        object_size_less_than    = optional(number, null)
-        prefix                   = optional(string, null)
-        tags                     = optional(map(string), null)
-      }), {}
-    )
-    expiration = optional(
-      object({
-        date                         = optional(string, null)
-        days                         = optional(number, null)
-        expired_object_delete_marker = optional(bool, null)
-      }), {}
-    )
-    transition = optional(
-      object({
-        date          = optional(string, null)
-        days          = optional(number, null)
-        storage_class = optional(string, null)
-      }), {}
-    )
-    noncurrent_version_expiration = optional(
-      object({
-        newer_noncurrent_versions = optional(number, null)
-        noncurrent_days           = optional(number, null)
-      }), {}
-    )
-    noncurrent_version_transition = optional(
-      object({
-        newer_noncurrent_versions = optional(number, null)
-        noncurrent_days           = optional(number, null)
-        storage_class             = optional(string, null)
-      }), {}
-    )
-  }))
-  default = [
+    {
+      id      = "transition_to_glacier"
+      enabled = true
+      transition = {
+        days          = 365
+        storage_class = "GLACIER"
+      }
+    },
     {
       id      = "expire_logs"
       enabled = true
@@ -89,115 +20,184 @@ variable "lifecycle_configuration_rules" {
       }
     }
   ]
+
+  # s3 access logging bucket must be deployed first or terraform must run twice
+  s3_access_logging_bucket_name = "aws-c2-access-logging"
 }
 
-variable "expected_bucket_owner" {
-  description = "The account ID of the expected bucket owner."
-  type        = string
-  default     = null
-}
+# variable "lifecycle_configuration_rules" {
+#   description = "A list of lifecycle rules."
+#   type = list(object({
+#     enabled                                = optional(bool, true)
+#     id                                     = string
+#     abort_incomplete_multipart_upload_days = optional(number, null)
+#     filter = optional(
+#       object({
+#         object_size_greater_than = optional(number, null)
+#         object_size_less_than    = optional(number, null)
+#         prefix                   = optional(string, null)
+#         tag = optional(
+#           object({
+#             key   = string
+#             value = string
+#           }), null
+#         )
+#       }), {}
+#     )
+#     filter_and = optional(
+#       object({
+#         object_size_greater_than = optional(number, null)
+#         object_size_less_than    = optional(number, null)
+#         prefix                   = optional(string, null)
+#         tags                     = optional(map(string), null)
+#       }), {}
+#     )
+#     expiration = optional(
+#       object({
+#         date                         = optional(string, null)
+#         days                         = optional(number, null)
+#         expired_object_delete_marker = optional(bool, null)
+#       }), {}
+#     )
+#     transition = optional(
+#       object({
+#         date          = optional(string, null)
+#         days          = optional(number, null)
+#         storage_class = optional(string, null)
+#       }), {}
+#     )
+#     noncurrent_version_expiration = optional(
+#       object({
+#         newer_noncurrent_versions = optional(number, null)
+#         noncurrent_days           = optional(number, null)
+#       }), {}
+#     )
+#     noncurrent_version_transition = optional(
+#       object({
+#         newer_noncurrent_versions = optional(number, null)
+#         noncurrent_days           = optional(number, null)
+#         storage_class             = optional(string, null)
+#       }), {}
+#     )
+#   }))
+#   default = [
+#     {
+#       id      = "expire_logs"
+#       enabled = true
+#       expiration = {
+#         days = 730
+#       }
+#     }
+#   ]
+# }
 
-# DEBUG
-resource "aws_s3_bucket_lifecycle_configuration" "ntc_bucket" {
-  count = length(var.lifecycle_configuration_rules) > 0 ? 1 : 0
+# variable "expected_bucket_owner" {
+#   description = "The account ID of the expected bucket owner."
+#   type        = string
+#   default     = null
+# }
 
-  bucket                = "aws-c2-dns-query-logs-archive"
-  expected_bucket_owner = var.expected_bucket_owner
+# # DEBUG
+# resource "aws_s3_bucket_lifecycle_configuration" "ntc_bucket" {
+#   count = length(var.lifecycle_configuration_rules) > 0 ? 1 : 0
 
-  dynamic "rule" {
-    for_each = var.lifecycle_configuration_rules
+#   bucket                = "aws-c2-dns-query-logs-archive"
+#   expected_bucket_owner = var.expected_bucket_owner
 
-    content {
-      id     = rule.value.id
-      status = rule.value.enabled == true ? "Enabled" : "Disabled"
+#   dynamic "rule" {
+#     for_each = var.lifecycle_configuration_rules
 
-      dynamic "filter" {
-        for_each = length([for v in values(rule.value.filter) : v if v != null]) == 0 && length([for v in values(rule.value.filter_and) : v if v != null]) == 0 ? [true] : []
+#     content {
+#       id     = rule.value.id
+#       status = rule.value.enabled == true ? "Enabled" : "Disabled"
 
-        content {}
-      }
+#       dynamic "filter" {
+#         for_each = length([for v in values(rule.value.filter) : v if v != null]) == 0 && length([for v in values(rule.value.filter_and) : v if v != null]) == 0 ? [true] : []
 
-      dynamic "filter" {
-        for_each = length([for v in values(rule.value.filter) : v if v != null]) > 0 ? [true] : []
+#         content {}
+#       }
 
-        content {
-          object_size_greater_than = rule.value.filter.object_size_greater_than
-          object_size_less_than    = rule.value.filter.object_size_less_than
-          prefix                   = rule.value.filter.prefix
+#       dynamic "filter" {
+#         for_each = length([for v in values(rule.value.filter) : v if v != null]) > 0 ? [true] : []
 
-          dynamic "tag" {
-            for_each = length(keys(rule.value.filter.tag)) > 0 ? [true] : []
+#         content {
+#           object_size_greater_than = rule.value.filter.object_size_greater_than
+#           object_size_less_than    = rule.value.filter.object_size_less_than
+#           prefix                   = rule.value.filter.prefix
 
-            content {
-              key   = tag.value.key
-              value = tag.value.value
-            }
-          }
-        }
-      }
+#           dynamic "tag" {
+#             for_each = length(keys(rule.value.filter.tag)) > 0 ? [true] : []
 
-      dynamic "filter" {
-        for_each = length([for v in values(rule.value.filter_and) : v if v != null]) > 0 ? [true] : []
+#             content {
+#               key   = tag.value.key
+#               value = tag.value.value
+#             }
+#           }
+#         }
+#       }
 
-        content {
-          and {
-            object_size_greater_than = rule.value.filter.object_size_greater_than
-            object_size_less_than    = rule.value.filter.object_size_less_than
-            prefix                   = rule.value.filter.prefix
-            tags                     = rule.value.filter.tags
-          }
-        }
-      }
+#       dynamic "filter" {
+#         for_each = length([for v in values(rule.value.filter_and) : v if v != null]) > 0 ? [true] : []
 
-      dynamic "abort_incomplete_multipart_upload" {
-        for_each = rule.value.abort_incomplete_multipart_upload_days != null ? [true] : []
+#         content {
+#           and {
+#             object_size_greater_than = rule.value.filter.object_size_greater_than
+#             object_size_less_than    = rule.value.filter.object_size_less_than
+#             prefix                   = rule.value.filter.prefix
+#             tags                     = rule.value.filter.tags
+#           }
+#         }
+#       }
 
-        content {
-          days_after_initiation = rule.value.abort_incomplete_multipart_upload_days
-        }
-      }
+#       dynamic "abort_incomplete_multipart_upload" {
+#         for_each = rule.value.abort_incomplete_multipart_upload_days != null ? [true] : []
 
-      dynamic "expiration" {
-        for_each = length([for v in values(rule.value.expiration) : v if v != null]) > 0 ? [true] : []
+#         content {
+#           days_after_initiation = rule.value.abort_incomplete_multipart_upload_days
+#         }
+#       }
 
-        content {
-          date                         = rule.value.expiration.date
-          days                         = rule.value.expiration.days
-          expired_object_delete_marker = rule.value.expiration.expired_object_delete_marker
-        }
-      }
+#       dynamic "expiration" {
+#         for_each = length([for v in values(rule.value.expiration) : v if v != null]) > 0 ? [true] : []
 
-      dynamic "transition" {
-        for_each = length([for v in values(rule.value.transition) : v if v != null]) > 0 ? [true] : []
+#         content {
+#           date                         = rule.value.expiration.date
+#           days                         = rule.value.expiration.days
+#           expired_object_delete_marker = rule.value.expiration.expired_object_delete_marker
+#         }
+#       }
 
-        content {
-          date          = rule.value.transition.date
-          days          = rule.value.transition.days
-          storage_class = rule.value.transition.storage_class
-        }
-      }
+#       dynamic "transition" {
+#         for_each = length([for v in values(rule.value.transition) : v if v != null]) > 0 ? [true] : []
 
-      dynamic "noncurrent_version_expiration" {
-        for_each = length([for v in values(rule.value.noncurrent_version_expiration) : v if v != null]) > 0 ? [true] : []
+#         content {
+#           date          = rule.value.transition.date
+#           days          = rule.value.transition.days
+#           storage_class = rule.value.transition.storage_class
+#         }
+#       }
 
-        content {
-          newer_noncurrent_versions = rule.value.noncurrent_version_expiration.newer_noncurrent_versions
-          noncurrent_days           = rule.value.noncurrent_version_expiration.noncurrent_days
-        }
-      }
+#       dynamic "noncurrent_version_expiration" {
+#         for_each = length([for v in values(rule.value.noncurrent_version_expiration) : v if v != null]) > 0 ? [true] : []
 
-      dynamic "noncurrent_version_transition" {
-        for_each = length([for v in values(rule.value.noncurrent_version_transition) : v if v != null]) > 0 ? [true] : []
+#         content {
+#           newer_noncurrent_versions = rule.value.noncurrent_version_expiration.newer_noncurrent_versions
+#           noncurrent_days           = rule.value.noncurrent_version_expiration.noncurrent_days
+#         }
+#       }
 
-        content {
-          newer_noncurrent_versions = rule.value.noncurrent_version_transition.newer_noncurrent_versions
-          noncurrent_days           = rule.value.noncurrent_version_transition.noncurrent_days
-          storage_class             = rule.value.noncurrent_version_transition.storage_class
-        }
-      }
-    }
-  }
-}
+#       dynamic "noncurrent_version_transition" {
+#         for_each = length([for v in values(rule.value.noncurrent_version_transition) : v if v != null]) > 0 ? [true] : []
+
+#         content {
+#           newer_noncurrent_versions = rule.value.noncurrent_version_transition.newer_noncurrent_versions
+#           noncurrent_days           = rule.value.noncurrent_version_transition.noncurrent_days
+#           storage_class             = rule.value.noncurrent_version_transition.storage_class
+#         }
+#       }
+#     }
+#   }
+# }
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ NTC S3 LOG ARCHIVE
