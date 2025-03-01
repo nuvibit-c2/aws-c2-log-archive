@@ -12,17 +12,40 @@ locals {
     #     storage_class = "GLACIER"
     #   }
     # },
-    {
-      id      = "expire_logs"
-      enabled = true
-      expiration = {
-        days = 730
-      }
-    }
+    # {
+    #   id      = "expire_logs"
+    #   enabled = true
+    #   expiration = {
+    #     days = 730
+    #   }
+    # }
   ]
 
   # s3 access logging bucket must be deployed first or terraform must run twice
   s3_access_logging_bucket_name = "aws-c2-access-logging"
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "debug" {
+  bucket = "aws-c2-vpc-flow-logs-archive"
+
+  rule {
+    id     = "expire_logs"
+    status = "Enabled"
+
+    expiration {
+      days = 730
+    }
+
+    filter {}
+
+    noncurrent_version_transition {
+      storage_class = "GLACIER"
+    }
+
+    transition {
+      storage_class = "GLACIER"
+    }
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
