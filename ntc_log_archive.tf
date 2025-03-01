@@ -25,21 +25,22 @@ locals {
   s3_access_logging_bucket_name = "aws-c2-access-logging"
 }
 
-resource "aws_s3_bucket_lifecycle_configuration" "debug" {
-  bucket = "aws-c2-vpc-flow-logs-archive"
+# resource "aws_s3_bucket_lifecycle_configuration" "debug" {
+#   bucket = "aws-c2-vpc-flow-logs-archive"
 
-  rule {
-    id = "expire_logs"
+#   rule {
+#     id     = "expire_logs"
 
-    expiration {
-      days = 730
-    }
+#     expiration {
+#       days = 730
+#     }
 
-    filter {}
+#     filter {}
 
-    status = "Enabled"
-  }
-}
+#     status = "Enabled"
+#   }
+# }
+
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ NTC S3 LOG ARCHIVE
