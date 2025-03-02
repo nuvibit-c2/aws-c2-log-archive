@@ -12,13 +12,13 @@ locals {
     #     storage_class = "GLACIER"
     #   }
     # },
-    {
-      id      = "expire_logs"
-      enabled = true
-      expiration = {
-        days = 730
-      }
-    }
+    # {
+    #   id      = "expire_logs"
+    #   enabled = true
+    #   expiration = {
+    #     days = 730
+    #   }
+    # }
   ]
 
   # s3 access logging bucket must be deployed first or terraform must run twice
