@@ -4,21 +4,21 @@
 locals {
   # lifecycle configuration rules to optimize storage cost of logs throughout their lifecycle
   default_lifecycle_configuration_rules = [
-    # {
-    #   id      = "transition_to_glacier"
-    #   enabled = true
-    #   transition = {
-    #     days          = 365
-    #     storage_class = "GLACIER"
-    #   }
-    # },
-    # {
-    #   id      = "expire_logs"
-    #   enabled = true
-    #   expiration = {
-    #     days = 730
-    #   }
-    # }
+    {
+      id      = "transition_to_glacier"
+      enabled = true
+      transition = {
+        days          = 365
+        storage_class = "GLACIER"
+      }
+    },
+    {
+      id      = "expire_logs"
+      enabled = true
+      expiration = {
+        days = 730
+      }
+    }
   ]
 
   # s3 access logging bucket must be deployed first or terraform must run twice
@@ -29,7 +29,8 @@ locals {
 # ¦ NTC S3 LOG ARCHIVE
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_log_archive" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.2.0"
+  # source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.2.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=fix-lifecycle-configuration-defaults"
 
   # log archive buckets to store s3 access logs, cloudtrail logs, vpc flow logs, dns query logs, aws config logs and guardduty logs
   log_archive_buckets = [
