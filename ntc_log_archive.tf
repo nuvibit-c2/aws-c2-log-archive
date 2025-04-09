@@ -20,31 +20,41 @@ locals {
       }
     }
   ]
-
-  # s3 access logging bucket must be deployed first or terraform must run twice
-  s3_access_logging_bucket_name = "aws-c2-access-logging"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ¦ NTC S3 LOG ARCHIVE
 # ---------------------------------------------------------------------------------------------------------------------
+module "ntc_log_archive_access_logging" {
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.2.1"
+
+  # log archive buckets to store s3 access logs, cloudtrail logs, vpc flow logs, dns query logs, aws config logs and guardduty logs
+  # using a separate module call to create s3 access logging bucket to avoid terraform dependency issues
+  log_archive_buckets = [
+    {
+      bucket_name                   = "aws-c2-access-logging"
+      archive_type                  = "s3_access_logging"
+      lifecycle_configuration_rules = local.default_lifecycle_configuration_rules
+      object_lock_enabled           = false
+    }
+  ]
+
+  providers = {
+    aws = aws.euc1
+  }
+}
+
 module "ntc_log_archive" {
   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.2.1"
 
   # log archive buckets to store s3 access logs, cloudtrail logs, vpc flow logs, dns query logs, aws config logs and guardduty logs
   log_archive_buckets = [
     {
-      bucket_name                   = local.s3_access_logging_bucket_name
-      archive_type                  = "s3_access_logging"
-      lifecycle_configuration_rules = local.default_lifecycle_configuration_rules
-      object_lock_enabled           = false
-    },
-    {
       bucket_name                       = "aws-c2-cloudtrail-archive"
       archive_type                      = "org_cloudtrail"
       lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
       enable_access_logging             = true
-      access_logging_target_bucket_name = local.s3_access_logging_bucket_name
+      access_logging_target_bucket_name = module.ntc_log_archive_access_logging.log_archive_bucket_ids["s3_access_logging"]
       access_logging_target_prefix      = "org_cloudtrail/"
       # object_lock_enabled               = true
       # object_lock_configuration = {
@@ -57,7 +67,7 @@ module "ntc_log_archive" {
       archive_type                      = "vpc_flow_logs"
       lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
       enable_access_logging             = true
-      access_logging_target_bucket_name = local.s3_access_logging_bucket_name
+      access_logging_target_bucket_name = module.ntc_log_archive_access_logging.log_archive_bucket_ids["s3_access_logging"]
       access_logging_target_prefix      = "vpc_flow_logs/"
     },
     {
@@ -65,7 +75,7 @@ module "ntc_log_archive" {
       archive_type                      = "transit_gateway_flow_logs"
       lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
       enable_access_logging             = true
-      access_logging_target_bucket_name = local.s3_access_logging_bucket_name
+      access_logging_target_bucket_name = module.ntc_log_archive_access_logging.log_archive_bucket_ids["s3_access_logging"]
       access_logging_target_prefix      = "transit_gateway_flow_logs/"
     },
     {
@@ -73,7 +83,7 @@ module "ntc_log_archive" {
       archive_type                      = "dns_query_logs"
       lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
       enable_access_logging             = true
-      access_logging_target_bucket_name = local.s3_access_logging_bucket_name
+      access_logging_target_bucket_name = module.ntc_log_archive_access_logging.log_archive_bucket_ids["s3_access_logging"]
       access_logging_target_prefix      = "dns_query_logs/"
     },
     {
@@ -81,7 +91,7 @@ module "ntc_log_archive" {
       archive_type                      = "guardduty"
       lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
       enable_access_logging             = true
-      access_logging_target_bucket_name = local.s3_access_logging_bucket_name
+      access_logging_target_bucket_name = module.ntc_log_archive_access_logging.log_archive_bucket_ids["s3_access_logging"]
       access_logging_target_prefix      = "guardduty/"
     },
     {
@@ -91,7 +101,7 @@ module "ntc_log_archive" {
       config_iam_path                   = "/"
       config_iam_role_name              = "ntc-config-role"
       enable_access_logging             = true
-      access_logging_target_bucket_name = local.s3_access_logging_bucket_name
+      access_logging_target_bucket_name = module.ntc_log_archive_access_logging.log_archive_bucket_ids["s3_access_logging"]
       access_logging_target_prefix      = "aws_config/"
     }
   ]
