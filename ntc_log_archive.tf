@@ -26,7 +26,8 @@ locals {
 # ¦ NTC S3 LOG ARCHIVE
 # ---------------------------------------------------------------------------------------------------------------------
 module "ntc_log_archive_access_logging" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.2.1"
+  # source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.2.1"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=feat-harden-bucket-policies"
 
   # log archive buckets to store s3 access logs, cloudtrail logs, vpc flow logs, dns query logs, aws config logs and guardduty logs
   # using a separate module call to create s3 access logging bucket to avoid terraform dependency issues
@@ -45,7 +46,8 @@ module "ntc_log_archive_access_logging" {
 }
 
 module "ntc_log_archive" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.2.1"
+  # source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.2.1"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=feat-harden-bucket-policies"
 
   # log archive buckets to store s3 access logs, cloudtrail logs, vpc flow logs, dns query logs, aws config logs and guardduty logs
   log_archive_buckets = [
