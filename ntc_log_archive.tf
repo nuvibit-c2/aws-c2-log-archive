@@ -119,6 +119,7 @@
 # Customize based on your compliance and regulatory requirements
 # =====================================================================================================================
 locals {
+  config_iam_role_name = "ntc-config-role" # ⚠️  Must match config role name used for account baseline
   # -------------------------------------------------------------------------------------------------------------------
   # Default Lifecycle Configuration Rules
   # -------------------------------------------------------------------------------------------------------------------

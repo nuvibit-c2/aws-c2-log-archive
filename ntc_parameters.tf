@@ -62,6 +62,7 @@ locals {
     "log_bucket_arns"         = module.ntc_log_archive.log_archive_bucket_arns  # S3 bucket ARNs
     "log_bucket_ids"          = module.ntc_log_archive.log_archive_bucket_ids   # S3 bucket names
     "log_bucket_kms_key_arns" = module.ntc_log_archive.log_archive_kms_key_arns # KMS key ARNs
+    "config_iam_role_name"    = local.config_iam_role_name
   }
 
   # -----------------------------------------------------
