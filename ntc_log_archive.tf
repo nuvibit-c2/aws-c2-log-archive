@@ -204,7 +204,7 @@ locals {
 #   • Retention can be shorter than main logs (1 year is common)
 # =====================================================================================================================
 module "ntc_log_archive_access_logging" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.3.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=2.0.0"
 
   # -------------------------------------------------------------------------------------------------------------------
   # S3 Access Logging Bucket Configuration
@@ -215,6 +215,7 @@ module "ntc_log_archive_access_logging" {
   # -------------------------------------------------------------------------------------------------------------------
   log_archive_buckets = [
     {
+      region                        = "eu-central-1"
       bucket_name                   = "aws-c2-access-logging" # Bucket for S3 access logs
       archive_type                  = "s3_access_logging"     # Type: S3 access logging
       lifecycle_configuration_rules = local.default_lifecycle_configuration_rules
@@ -223,10 +224,6 @@ module "ntc_log_archive_access_logging" {
       object_lock_enabled = false
     }
   ]
-
-  providers = {
-    aws = aws.euc1
-  }
 }
 
 # =====================================================================================================================
@@ -252,7 +249,7 @@ module "ntc_log_archive_access_logging" {
 # Each 'archive_type' automatically configures the appropriate bucket and KMS policies
 # =====================================================================================================================
 module "ntc_log_archive" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.3.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=2.0.0"
 
   log_archive_buckets = [
     # =================================================================================================================
@@ -286,6 +283,7 @@ module "ntc_log_archive" {
     #   • ⚠️  Test thoroughly before enabling (cannot be disabled)
     # =================================================================================================================
     {
+      region                            = "eu-central-1"
       bucket_name                       = "aws-c2-cloudtrail-archive"
       archive_type                      = "org_cloudtrail" # CloudTrail organization trail
       lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
@@ -354,6 +352,7 @@ module "ntc_log_archive" {
     #   • Analyze traffic patterns for optimization
     # =================================================================================================================
     {
+      region                            = "eu-central-1"
       bucket_name                       = "aws-c2-vpc-flow-logs-archive"
       archive_type                      = "vpc_flow_logs" # VPC Flow Logs
       lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
@@ -385,6 +384,7 @@ module "ntc_log_archive" {
     #   • Troubleshoot Transit Gateway routing issues
     # =================================================================================================================
     {
+      region                            = "eu-central-1"
       bucket_name                       = "aws-c2-transit-gateway-logs-archive"
       archive_type                      = "transit_gateway_flow_logs" # Transit Gateway Flow Logs
       lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
@@ -418,6 +418,7 @@ module "ntc_log_archive" {
     #   • Investigate phishing or malware infections
     # =================================================================================================================
     {
+      region                            = "eu-central-1"
       bucket_name                       = "aws-c2-dns-query-logs-archive"
       archive_type                      = "dns_query_logs" # Route 53 Resolver Query Logs
       lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
@@ -462,6 +463,7 @@ module "ntc_log_archive" {
     #   • Note: Cross-region access logging is not supported
     # =================================================================================================================
     {
+      region                            = "eu-central-1"
       bucket_name                       = "aws-c2-guardduty-archive"
       archive_type                      = "guardduty" # GuardDuty findings
       lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
@@ -503,6 +505,7 @@ module "ntc_log_archive" {
     #   • Example: Account Factory baseline template for AWS Config should reference this role name
     # =================================================================================================================
     {
+      region                            = "eu-central-1"
       bucket_name                       = "aws-c2-config-archive"
       archive_type                      = "aws_config" # AWS Config snapshots
       lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
@@ -513,76 +516,4 @@ module "ntc_log_archive" {
       access_logging_target_prefix      = "aws_config/"
     }
   ]
-
-  providers = {
-    aws = aws.euc1 # Main region for log archive
-  }
 }
-
-# =====================================================================================================================
-# LOG ARCHIVE EXCEPTION - OPT-IN REGION WORKAROUND
-# =====================================================================================================================
-# Use this module when your main region is an OPT-IN region (e.g., Zurich eu-central-2)
-#
-# GUARDDUTY OPT-IN REGION LIMITATION:
-# ------------------------------------
-# AWS GuardDuty CANNOT export findings to opt-in regions
-# Supported regions: https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_exportfindings.html
-#
-# PROBLEM:
-# --------
-# If your log archive runs in Zurich (eu-central-2):
-#   ✗ GuardDuty in Frankfurt (eu-central-1) cannot export to Zurich
-#   ✗ All opt-in regions have this limitation
-#
-# SOLUTION:
-# ---------
-# Split log archive across TWO regions:
-#   Region 1 (Opt-in): All logs EXCEPT GuardDuty (see module above)
-#   Region 2 (Standard): GuardDuty findings ONLY (this module)
-#
-# CONFIGURATION NOTES:
-# --------------------
-# • enable_access_logging = false (cross-region access logging not supported or create additional access log bucket)
-# • Use a standard AWS region provider (e.g., aws.use1 for eu-central-1)
-# • Bucket name should indicate the exception (e.g., include region in name)
-# • Lifecycle rules same as main archive for consistency
-#
-# WHEN TO USE THIS:
-# -----------------
-# ✓ Main log archive in opt-in region (Zurich, Milan, Spain, etc.)
-# ✓ Need GuardDuty findings storage
-# ✗ Don't use if main region is already a standard region
-#
-# EXAMPLE SCENARIO:
-# -----------------
-# Main Archive (Zurich eu-central-2):
-#   • CloudTrail, VPC Flow Logs, DNS Query Logs, AWS Config, etc.
-#
-# Exception Archive (Frankfurt eu-central-1):
-#   • GuardDuty findings ONLY
-# =====================================================================================================================
-
-# Uncomment this module if your main region is an opt-in region
-# module "ntc_log_archive_exception" {
-#   source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=1.3.0"
-#
-#   # -----------------------------------------------------------------------------------------------------------------
-#   # GuardDuty Archive in Standard Region
-#   # -----------------------------------------------------------------------------------------------------------------
-#   # Store GuardDuty findings in a standard AWS region (not opt-in)
-#   # -----------------------------------------------------------------------------------------------------------------
-#   log_archive_buckets = [
-#     {
-#       bucket_name                   = "aws-c2-guardduty-archive-euc1"  # Include region in name for clarity
-#       archive_type                  = "guardduty"                      # GuardDuty findings only
-#       lifecycle_configuration_rules = local.default_lifecycle_configuration_rules
-#       enable_access_logging         = false                            # Cross-region access logging not supported
-#       object_lock_enabled           = false                            # Typically not needed for exception bucket
-#     }
-#   ]
-#
-#   providers = {
-#     aws = aws.use1                                                     # Use standard region provider (e.g., eu-central-1)
-#   }
-# }
