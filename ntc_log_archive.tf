@@ -204,7 +204,7 @@ locals {
 #   • Retention can be shorter than main logs (1 year is common)
 # =====================================================================================================================
 module "ntc_log_archive_access_logging" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=2.0.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=2.0.1"
 
   # -------------------------------------------------------------------------------------------------------------------
   # S3 Access Logging Bucket Configuration
@@ -249,7 +249,7 @@ module "ntc_log_archive_access_logging" {
 # Each 'archive_type' automatically configures the appropriate bucket and KMS policies
 # =====================================================================================================================
 module "ntc_log_archive" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=2.0.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=2.0.1"
 
   log_archive_buckets = [
     # =================================================================================================================
