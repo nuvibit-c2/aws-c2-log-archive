@@ -204,7 +204,7 @@ locals {
 #   • Retention can be shorter than main logs (1 year is common)
 # =====================================================================================================================
 module "ntc_log_archive_access_logging" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=2.0.1"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=2.1.1"
 
   # -------------------------------------------------------------------------------------------------------------------
   # S3 Access Logging Bucket Configuration
@@ -249,7 +249,7 @@ module "ntc_log_archive_access_logging" {
 # Each 'archive_type' automatically configures the appropriate bucket and KMS policies
 # =====================================================================================================================
 module "ntc_log_archive" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=2.0.1"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-log-archive?ref=2.1.1"
 
   log_archive_buckets = [
     # =================================================================================================================
@@ -509,8 +509,6 @@ module "ntc_log_archive" {
       bucket_name                       = "aws-c2-config-archive"
       archive_type                      = "aws_config" # AWS Config snapshots
       lifecycle_configuration_rules     = local.default_lifecycle_configuration_rules
-      config_iam_path                   = "/"               # IAM path for Config role
-      config_iam_role_name              = "ntc-config-role" # ⚠️  Must match role name in workload accounts
       enable_access_logging             = true
       access_logging_target_bucket_name = module.ntc_log_archive_access_logging.log_archive_bucket_ids["s3_access_logging"]
       access_logging_target_prefix      = "aws_config/"

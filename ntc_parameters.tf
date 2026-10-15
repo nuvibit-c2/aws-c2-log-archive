@@ -117,7 +117,7 @@ locals {
 #   local.ntc_parameters["mgmt-account-factory"]["core_accounts"]["INSERT_ACCOUNT_NAME"]
 # =====================================================================================================================
 module "ntc_parameters_reader" {
-  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/reader?ref=2.0.0"
+  source = "github.com/nuvibit-terraform-collection/terraform-aws-ntc-parameters//modules/reader?ref=2.0.1"
 
   region      = "eu-central-1"
   bucket_name = local.ntc_parameters_bucket_name
@@ -137,7 +137,7 @@ module "ntc_parameters_reader" {
 #
 # WRITE PERMISSIONS:
 # ------------------
-# This account can ONLY write to its own parameter node (mgmt-identity-center)
+# This account can ONLY write to its own parameter node (log-archive)
 # Attempting to write to another node will fail with S3 AccessDenied
 #
 # REPLACE_PARAMETERS BEHAVIOR:
