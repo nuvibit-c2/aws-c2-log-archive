@@ -119,7 +119,6 @@
 # Customize based on your compliance and regulatory requirements
 # =====================================================================================================================
 locals {
-  config_iam_role_name = "ntc-config-role" # ⚠️  Must match config role name used for account baseline
   # -------------------------------------------------------------------------------------------------------------------
   # Default Lifecycle Configuration Rules
   # -------------------------------------------------------------------------------------------------------------------
@@ -498,11 +497,8 @@ module "ntc_log_archive" {
     #   • Audit trail for compliance frameworks (PCI-DSS, HIPAA)
     #
     # IAM ROLE CONFIGURATION:
-    #   • config_iam_role_name: IAM role for AWS Config service
-    #   • Automatically granted S3 and KMS permissions by module
-    #   • ⚠️  IMPORTANT: Use the SAME role name when deploying AWS Config to workload accounts
-    #   • This role name must match in Account Baseline templates for cross-account Config delivery
-    #   • Example: Account Factory baseline template for AWS Config should reference this role name
+    #   • AWS Config delivers through its service linked role (AWSServiceRoleForConfig)
+    #   • Bucket and KMS policies grant the Config service principal, no custom IAM role is needed
     # =================================================================================================================
     {
       region                            = "eu-central-1"
